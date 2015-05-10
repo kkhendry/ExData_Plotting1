@@ -1,0 +1,22 @@
+taball <- read.table("household_power_consumption.txt", sep = ";", header=TRUE)
+tab21 = taball[taball[, "Date"]=="1/2/2007", ]
+tab22 = taball[taball[, "Date"]=="2/2/2007", ]
+tab = rbind(tab21, tab22)
+DateTime <- paste(tab[, "Date"], tab[, "Time"])
+tab <- cbind(DateTime, tab[, 3:9])
+tab$DateTime <- strptime(tab[, "DateTime"], "%d/%m/%Y  %H:%M:%S")
+tab$Sub_metering_1 <- as.numeric(as.character(tab$Sub_metering_1))
+tab$Sub_metering_2 <- as.numeric(as.character(tab$Sub_metering_2))
+tab$Sub_metering_3 <- as.numeric(as.character(tab$Sub_metering_3))
+par(mfrow = c(2,2))
+with(tab, {
+  plot(x, as.numeric(as.character(tab[, "Global_active_power"])), type = "l", ylab = "Global Active Power", xlab = "")
+  plot(DateTime,as.numeric(as.character(Voltage)), xlab = "datetime", ylab = "Voltage", type ="l")
+  plot(DateTime, Sub_metering_1, main = "", type="l", ylab = "Energy sub metering")
+  lines(tab$DateTime, tab$Sub_metering_2, col="red")
+  lines(tab$DateTime, tab$Sub_metering_3,col="blue")
+  legend("topright", pch = "-", col = c("black", "blue", "red"), legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+  plot(DateTime, as.numeric(as.character(Global_reactive_power)), type="l",xlab = "datetime", ylab="Global_reactive_power")
+})
+dev.copy(png, file = "plot4.png")
+dev.off()
